@@ -1,0 +1,22 @@
+{
+  "name": "trilha_tic",
+  "version": "1.0.0",
+  "description": "primeira Api",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./",
+    "start:dev": "nodemon"
+  },
+  "type": "module",
+  "keywords": [
+    "primeira",
+    "api"
+  ],
+  "author": "Eduardo L",
+  "license": "ISC",
+  "dependencies": {
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
+  }
+}
