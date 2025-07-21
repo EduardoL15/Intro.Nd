@@ -26,10 +26,12 @@ export const Produto = sequelize.define('produto', {
 
 export async function criaProduto(produto) {
     try{
-        await Produto.create(produto);
-    console.log(`O produto ${produto.nome} foi criado com sucesso!`);
+        const resultado = await Produto.create(produto);
+    console.log(`O produto ${resultado.nome} foi criado com sucesso!`);
+    return resultado;
     } catch(erro) {
         console.log('Erro ao criar o produto', erro);
+        throw erro;
     } 
 }
 export async function leProduto() {
@@ -52,8 +54,10 @@ export async function atualizaProdutoporid(id, dadosProduto) {
     try{
         const resultado = await Produto.update(dadosProduto, { where: { id: id }});
     console.log(`Produto atualizado com sucesso!`, resultado);
+    return resultado;
     } catch(erro) {
         console.log('Erro ao atualizar o produto', erro);
+        throw erro;
     }
 }
 export async function deletaProdutoporid(id) {
@@ -62,5 +66,6 @@ export async function deletaProdutoporid(id) {
     console.log(`Produto deletado com sucesso!`, resultado);
     } catch(erro) {
         console.log('Erro ao deletar o produto', erro);
+        throw erro;
     }
 }
