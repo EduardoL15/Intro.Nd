@@ -126,6 +126,10 @@ export default async function rotas(req, res, dado) {
 
                 res.statusCode = 200;
 
+                if(!resposta) {
+                    res.statusCode = 404;
+                }
+
                 res.end(JSON.stringify(resposta));
 
                 return;
@@ -168,7 +172,17 @@ export default async function rotas(req, res, dado) {
         const id = req.url.split('')[2];
 
         try{
-            const resposta = await deletaProdutoporid(id);
+            const encontrado = await deletaProdutoporid(id);
+
+            res.statusCode = 204;
+
+            if(!encontrado) {
+                res.statusCode = 404;
+            }
+
+            res.end();
+
+            return;
         } catch(erro) {
             console.log('Falha ao remover produto', erro);
 
@@ -176,7 +190,7 @@ export default async function rotas(req, res, dado) {
 
             const resposta = {
                 erro: {
-                    mensagem: `Falha ao remover o produto ${produto.nome}`
+                    mensagem: `Falha ao remover o produto ${id}`
                 }
             };
 
@@ -184,12 +198,64 @@ export default async function rotas(req, res, dado) {
 
             return;
         }
+    }
 
-        res.statusCode = 204;
+    if (req.method === 'GET' && req.url.split('')[1] === '/produtos' && !isNaN(req.url.split('')[2])) {
+        const id = req.url.split('')[2];
 
-        res.end();
+        try{
+            const resposta = await leProdutoporid(id);
+            
+            res.statusCode = 200;
 
-        return;
+            if(!resposta) {
+                res.statusCode = 404;
+            }
+
+            res.end(JSON.stringify(resposta));
+
+            return resposta; 
+        } catch(erro) {
+            console.log('Falha ao buscar produto', erro);
+
+            res.statusCode = 500;
+
+            const resposta = {
+                erro: {
+                    mensagem: `Falha ao buscar o produto ${id}`
+                }
+            };
+
+            res.end(JSON.stringify(resposta));
+
+            return;
+        }
+    }
+
+    if (req.method === 'GET' && req.url === '/produtos') {
+        try{
+            const resposta = await leProduto();
+            
+            res.statusCode = 200;
+
+            res.end(JSON.stringify(resposta));
+
+            return resposta; 
+        } catch(erro) {
+            console.log('Falha ao buscar produtos', erro);
+
+            res.statusCode = 500;
+
+            const resposta = {
+                erro: {
+                    mensagem: `Falha ao buscar o produtos`
+                }
+            };
+
+            res.end(JSON.stringify(resposta));
+
+            return;
+        }
     }
     res.statusCode = 404;
 

@@ -38,22 +38,34 @@ export async function leProduto() {
     try{
         const resultado = await Produto.findAll();
     console.log(`Produtos consultados com sucesso!`, resultado);
+    return resultado;
     } catch(erro) {
         console.log('Erro ao buscar produto', erro);
+        throw erro;
     }
 }
 export async function leProdutoporid(id) {
     try{
         const resultado = await Produto.findByPk(id);
     console.log(`Produto consultado com sucesso!`, resultado);
+    return resultado;
     } catch(erro) {
         console.log('Erro ao buscar o produto', erro);
+        throw erro;
     }
 }
 export async function atualizaProdutoporid(id, dadosProduto) {
     try{
-        const resultado = await Produto.update(dadosProduto, { where: { id: id }});
-    console.log(`Produto atualizado com sucesso!`, resultado);
+        const resultado = await Produto.findByPk(id);
+        if(resultado?.id){
+            for (const chave in dadosProduto) {
+                if(chave in resultado) {
+                    resultado[chave] = dadosProduto[chave];
+                }
+            }
+            resultado.save();
+            console.log(`Produto atualizado com sucesso!`, resultado);
+        }
     return resultado;
     } catch(erro) {
         console.log('Erro ao atualizar o produto', erro);
