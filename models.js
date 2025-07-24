@@ -81,3 +81,55 @@ export async function deletaProdutoporid(id) {
         throw erro;
     }
 }
+
+const Pedido = sequelize.define('pedido', {
+    id:{
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    valor_total: {
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    },
+    estado: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
+});
+
+const ProdutosPedidos = sequelize.define('produtos_pedidos', {
+    id:{
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    quantidade: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    preco: {
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    }
+});
+
+Produto.belongsToMany(Pedido, {through: ProdutosPedidos});
+Pedido.belongsToMany(Produto, {through: ProdutosPedidos});
+
+export async function criaPedidos(novoPedido) {
+    try{
+        const pedido = Pedido.create({
+            valor_total: novoPedido.valorTotal,
+            estado: 'ENCAMINHADO'
+        });
+
+        for(const prod of novoPedido.produtos) {
+            
+        }
+
+    } catch (erro) {
+        console.log('Falha ao criar Pedido', erro);
+        throw erro;
+    }
+}
