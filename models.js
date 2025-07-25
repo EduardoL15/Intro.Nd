@@ -98,7 +98,7 @@ const Pedido = sequelize.define('pedido', {
     }
 });
 
-const ProdutosPedidos = sequelize.define('produtos_pedidos', {
+const ProdutosPedido = sequelize.define('produtos_pedido', {
     id:{
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -114,22 +114,49 @@ const ProdutosPedidos = sequelize.define('produtos_pedidos', {
     }
 });
 
-Produto.belongsToMany(Pedido, {through: ProdutosPedidos});
-Pedido.belongsToMany(Produto, {through: ProdutosPedidos});
+Produto.belongsToMany(Pedido, {through: ProdutosPedido});
+Pedido.belongsToMany(Produto, {through: ProdutosPedido});
 
-export async function criaPedidos(novoPedido) {
+export async function criaPedido(novoPedido) {
     try{
-        const pedido = Pedido.create({
+        const pedido = await Pedido.create({
             valor_total: novoPedido.valorTotal,
             estado: 'ENCAMINHADO'
         });
 
         for(const prod of novoPedido.produtos) {
-            
+            const produto = await Produto.findByPk(prod.id);
+            if (produto) {
+                pedido.addProduto(produto, { through: { quantidade: prod.quantidade, preco: produto.preco}});
+            } 
         }
 
+        console.log('Pedido criado com sucesso!');
+
+        return pedido;
     } catch (erro) {
         console.log('Falha ao criar Pedido', erro);
+        throw erro;
+    }
+}
+
+export async function lePedidos() {
+    try {
+        const resultado = await ProdutosPedido.findAll();
+        console.log('Pedidos foram consutado com sucesso!', resultado);
+        return resultado;
+    } catch(erro) {
+        console.log('Falha ao consutar pedidos', erro);
+        throw erro;
+    }
+}
+export async function lePedidosPorid(id) {
+    try {
+        const resultado = Pedido.findAll(id);
+        console.log('Pedido foi consutado com sucesso!', resultado);
+        return resultado;
+    } catch(erro) {
+        console.log('Falha ao consutar o pedido', erro);
         throw erro;
     }
 }
